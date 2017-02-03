@@ -1,6 +1,6 @@
 {
   "name": "truffle-init",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Initializer for example Truffle projects",
   "main": "index.js",
   "scripts": {
