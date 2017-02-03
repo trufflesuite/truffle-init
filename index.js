@@ -1,3 +1,4 @@
+var Config = require("truffle-config");
 var temp = require("temp");
 var ghdownload = require('github-download');
 var path = require("path");
