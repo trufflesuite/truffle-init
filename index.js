@@ -133,6 +133,29 @@ var Init = {
     }).then(function() {
       return init_config;
     });
+  },
+
+  sandbox: function(extended_config, callback) {
+    var self = this;
+    extended_config = extended_config || {}
+
+    if (typeof extended_config == "function") {
+      callback = extended_config;
+      extended_config = {};
+    }
+
+    temp.mkdir("truffle-sandbox-", function(err, dirPath) {
+      if (err) return callback(err);
+
+      self.fromGithub({
+        logger: {
+          log: function() {}
+        }
+      }, "default", dirPath).then(function() {
+        var config = Config.load(path.join(dirPath, "truffle.js"), extended_config);
+        callback(null, config);
+      }).catch(callback);
+    });
   }
 };
 
