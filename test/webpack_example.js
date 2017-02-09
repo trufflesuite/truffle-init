@@ -5,21 +5,20 @@ var assert = require("assert");
 var Init = require("../");
 
 describe("Webpack", function() {
-  var destination;
-
   var config = {
     logger: {
       log: function() {}
-    }
+    },
+    working_directory: path.join(__dirname, ".truffle_test_temp")
   };
+  var destination = config.working_directory;
 
-  before("get a temp destination", function(done) {
-    temp.mkdir('test-truffle-init', function(err, dirPath) {
-      if (err) return done(err);
+  before("mkdir", function(done) {
+    fs.ensureDir(config.working_directory, done);
+  });
 
-      destination = dirPath;
-      done();
-    });
+  after("remove temp directory", function(done) {
+    fs.remove(config.working_directory, done);
   });
 
   before("download webpack example from github", function() {
