@@ -12,7 +12,7 @@ var Init = {
   // when the directory exists.
   fromGithub: function(config, name, destination) {
     var expected_full_name = "truffle-init-" + name;
-    var temp_directory = temp.path({prefix: name + "-"});
+    var temp_directory = path.join(config.working_directory, ".truffle_init_temp");
 
     var init_config;
 
@@ -35,6 +35,15 @@ var Init = {
       });
       req.end();
 
+    }).then(function() {
+      // Remove the temp directory, if it exists, just to remove the
+      // possibility of errors.
+      return new Promise(function(accept, reject) {
+        fs.remove(temp_directory, function(err) {
+          if (err) return reject(err);
+          accept(err);
+        });
+      });
     }).then(function() {
 
       return new Promise(function(accept, reject) {
