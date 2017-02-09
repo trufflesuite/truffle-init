@@ -136,13 +136,12 @@ var Init = {
     });
   },
 
-  sandbox: function(extended_config, callback) {
+  sandbox: function(name, callback) {
     var self = this;
-    extended_config = extended_config || {}
 
-    if (typeof extended_config == "function") {
-      callback = extended_config;
-      extended_config = {};
+    if (typeof name == "function") {
+      callback = name;
+      name = "default";
     }
 
     temp.mkdir("truffle-sandbox-", function(err, dirPath) {
@@ -152,8 +151,8 @@ var Init = {
         logger: {
           log: function() {}
         }
-      }, "default", dirPath).then(function() {
-        var config = Config.load(path.join(dirPath, "truffle.js"), extended_config);
+      }, name, dirPath).then(function() {
+        var config = Config.load(path.join(dirPath, "truffle.js"), {});
         callback(null, config);
       }).catch(callback);
     });
