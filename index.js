@@ -159,7 +159,8 @@ var Init = {
       self.fromGithub({
         logger: {
           log: function() {}
-        }
+        },
+        working_directory: dirPath
       }, name, dirPath).then(function() {
         var config = Config.load(path.join(dirPath, "truffle.js"), {});
         callback(null, config);
