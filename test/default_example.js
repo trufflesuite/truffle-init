@@ -40,4 +40,28 @@ describe("Downloader", function() {
     assert(fs.existsSync(path.join(destination, "README.md")) == false, "README.md didn't get removed!");
     assert(fs.existsSync(path.join(destination, ".gitignore")) == false, ".gitignore didn't get removed!");
   });
+
+  it("won't re-init if truffle.js file exists", function(done) {
+    this.timeout(5000);
+
+    var contracts_directory = path.join(destination, "contracts");
+
+    // Assert our precondition
+    assert(fs.existsSync(contracts_directory), "contracts directory should exist for this test to be meaningful");
+
+    fs.remove(contracts_directory, function(err) {
+      if (err) return done(err);
+
+      Init.fromGithub(config, "default", destination).then(function(init_config) {
+        assert(fs.existsSync(contracts_directory) == false, "Contracts directory got recreated when it shouldn't have");
+        done();
+      }).catch(function(e) {
+        if (e.message.indexOf("A Truffle project already exists at the destination.") >= 0) {
+          done();
+        } else {
+          done(new Error("Unknown error received: " + e.stack));
+        }
+      });
+    })
+  });
 });

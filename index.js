@@ -16,25 +16,36 @@ var Init = {
 
     var init_config;
 
-    // First let's see if the expected repository exists. If it doesn't, ghdownload
-    // will fail spectacularly in a way we can't catch.
-    return new Promise(function(accept, reject) {
+    // First check for existence of truffle.js or truffle-config.js within the destination.
+    // If either exist, fail.
+    return Promise.resolve().then(function() {
+      var config_path = path.join(destination, "truffle.js");
+      var alternate_path = path.join(destination, "truffle-config.js");
 
-      var options = {
-        method: 'HEAD',
-        host: 'raw.githubusercontent.com',
-        path: '/trufflesuite/' + expected_full_name + "/master/truffle.js"
-      };
-      req = https.request(options, function(r) {
-        if (r.statusCode == 404) {
-          return reject(new Error("Example '" + name + "' doesn't exist. If you believe this is an error, please contact Truffle support."));
-        } else if (r.statusCode != 200) {
-          return reject(new Error("Error connecting to github.com. Please check your internet connection and try again."));
-        }
-        accept();
+      if (fs.existsSync(config_path) || fs.existsSync(alternate_path)) {
+        throw new Error("A Truffle project already exists at the destination. Stopping to prevent overwriting data.");
+      }
+    }).then(function() {
+      // Next let's see if the expected repository exists. If it doesn't, ghdownload
+      // will fail spectacularly in a way we can't catch, so we have to do it ourselves.
+      return new Promise(function(accept, reject) {
+
+        var options = {
+          method: 'HEAD',
+          host: 'raw.githubusercontent.com',
+          path: '/trufflesuite/' + expected_full_name + "/master/truffle.js"
+        };
+        req = https.request(options, function(r) {
+          if (r.statusCode == 404) {
+            return reject(new Error("Example '" + name + "' doesn't exist. If you believe this is an error, please contact Truffle support."));
+          } else if (r.statusCode != 200) {
+            return reject(new Error("Error connecting to github.com. Please check your internet connection and try again."));
+          }
+          accept();
+        });
+        req.end();
+
       });
-      req.end();
-
     }).then(function() {
       // Remove the temp directory, if it exists, just to remove the
       // possibility of errors.
