@@ -134,7 +134,8 @@ var Init = {
 
       config.logger.log("Installing dependencies...");
 
-      var pkg = require(path.join(destination, "package.json"));
+      var pkg = fs.readFileSync(path.join(destination, "package.json"), "utf8");
+      pkg = JSON.parse(pkg);
 
       var packages = [];
 
