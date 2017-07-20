@@ -27,7 +27,7 @@
     "npm-programmatic": "0.0.6",
     "rimraf": "^2.5.4",
     "temp": "^0.8.3",
-    "truffle-config": "~1.0.0"
+    "truffle-config": "^1.0.0"
   },
   "devDependencies": {
     "mocha": "^3.2.0"
